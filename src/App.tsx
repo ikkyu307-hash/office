@@ -180,17 +180,23 @@ function App() {
           {/* Main Top Header Area */}
           <div className="hud-panel p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-[rgba(25,27,44,0.2)] border border-[var(--border-color)]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-2 border-[var(--accent-cyan)] bg-zinc-800 flex items-center justify-center text-lg overflow-hidden">
+              <div className="w-10 h-10 rounded-full border-2 border-[var(--accent-cyan)] bg-[#121323] flex items-center justify-center text-lg overflow-hidden shadow-[0_0_10px_rgba(0,240,255,0.2)]">
                 👤
               </div>
               <div>
                 <div className="text-xs font-bold text-zinc-100 flex items-center gap-2">
                   <span>{currentProfile?.nickname || currentProfile?.name}</span>
-                  <span className="status-badge status-available capitalize py-0.5 text-[8px]">
+                  <span className={`status-badge ${
+                    currentProfile?.status === 'Focus Mode' ? 'status-focus' :
+                    currentProfile?.status === 'In a Meeting' ? 'status-meeting' :
+                    currentProfile?.status === 'Away From Keyboard' ? 'status-away' :
+                    currentProfile?.status === 'Resting' ? 'status-resting' :
+                    'status-available'
+                  } capitalize py-0.5 text-[8px] font-hud`}>
                     {currentProfile?.position}
                   </span>
                 </div>
-                <div className="text-[10px] text-zinc-500 font-mono mt-0.5 uppercase">
+                <div className="text-[10px] text-zinc-500 font-mono mt-0.5 uppercase tracking-wider">
                   {currentProfile?.department} Department
                 </div>
               </div>
@@ -231,21 +237,53 @@ function App() {
 
           {/* Simulated WebRTC Call screen if inside Meeting Room zone */}
           {currentZone === 'meeting' && (
-            <div className="hud-panel p-3 border border-[rgba(0,240,255,0.4)] bg-[rgba(0,240,255,0.03)] rounded-lg animate-pulse flex flex-col gap-2">
-              <div className="flex justify-between items-center text-[10px] text-[var(--accent-cyan)] font-bold">
-                <span>🔊 SIMULATED MEETING ROOM CALL ACTIVE (WEBRTC AUDIO ON)</span>
-                <span className="bg-[var(--accent-cyan)] text-black px-1.5 py-0.5 rounded text-[8px]">SYNC</span>
+            <div className="hud-panel p-4 border border-[rgba(0,240,255,0.3)] bg-[rgba(0,240,255,0.02)] rounded-xl flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[10px] text-[var(--accent-cyan)] font-hud font-bold tracking-wider">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent-cyan)] animate-ping"></span>
+                  🔊 WEBRTC CALL ACTIVE (ROOM SYNC)
+                </span>
+                
+                {/* Speaking visualizer bars */}
+                <div className="soundwave">
+                  <div className="soundwave-bar"></div>
+                  <div className="soundwave-bar"></div>
+                  <div className="soundwave-bar"></div>
+                  <div className="soundwave-bar"></div>
+                  <div className="soundwave-bar"></div>
+                </div>
               </div>
-              <div className="text-[10px] text-zinc-400 font-mono font-bold leading-normal truncate">
+              
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {allProfiles.map(p => (
+                    <div 
+                      key={p.id} 
+                      title={p.nickname}
+                      className="w-6 h-6 rounded-full border border-[var(--border-color)] bg-[#121323] flex items-center justify-center text-[10px]"
+                      style={{
+                        borderColor: p.id === 'user-id-123' ? 'var(--accent-cyan)' : 'var(--border-color)'
+                      }}
+                    >
+                      {p.nickname.substring(0, 1)}
+                    </div>
+                  ))}
+                </div>
+                <span className="text-[9px] text-zinc-500 font-mono">
+                  Attendees connected: {allProfiles.map(p => p.nickname).join(', ')}
+                </span>
+              </div>
+              
+              <div className="text-[11px] text-zinc-300 font-mono bg-black/60 p-2.5 rounded border border-zinc-800 leading-normal">
                 {meetingTranscript ? (
                   <div className="space-y-1">
-                    <span className="text-zinc-500">Live Transcript Stream:</span>
-                    <p className="text-[var(--accent-cyan)] text-xs italic">
+                    <span className="text-zinc-500 text-[9px] uppercase tracking-wider block">Real-time Translation:</span>
+                    <p className="text-[var(--accent-cyan)] italic">
                       {meetingTranscript.split('\n').filter(Boolean).slice(-1)[0]}
                     </p>
                   </div>
                 ) : (
-                  'Waiting for coworker bots to enter Alpha Room to start discussion...'
+                  <span className="text-zinc-600">Waiting for other employees to enter the Meeting Room to start dialogue...</span>
                 )}
               </div>
             </div>

@@ -30,32 +30,47 @@ export const GameEngine: React.FC<GameEngineProps> = ({
   const mapWidth = 640;
   const mapHeight = 480;
 
-  // Collision map definitions
-  const obstacles = [
+  // Default/Original obstacle definitions
+  const defaultObstacles = [
     // Outer walls
-    { x: 0, y: 0, w: 640, h: 20 },
-    { x: 0, y: 0, w: 20, h: 480 },
-    { x: 620, y: 0, w: 20, h: 480 },
-    { x: 0, y: 460, w: 640, h: 20 },
+    { x: 0, y: 0, w: 640, h: 20, type: 'wall' },
+    { x: 0, y: 0, w: 20, h: 480, type: 'wall' },
+    { x: 620, y: 0, w: 20, h: 480, type: 'wall' },
+    { x: 0, y: 460, w: 640, h: 20, type: 'wall' },
     
     // Meeting Room glass partitions (top right)
-    { x: 400, y: 20, w: 10, h: 140 },
-    { x: 400, y: 200, w: 10, h: 60 },
-    { x: 400, y: 260, w: 220, h: 10 },
+    { x: 400, y: 20, w: 10, h: 140, type: 'glass' },
+    { x: 400, y: 200, w: 10, h: 60, type: 'glass' },
+    { x: 400, y: 260, w: 220, h: 10, type: 'glass' },
 
     // Desks / Furniture
-    { x: 80, y: 100, w: 90, h: 45 },  // Tech desk 1
-    { x: 240, y: 100, w: 90, h: 45 }, // Tech desk 2
-    { x: 80, y: 220, w: 90, h: 45 },  // Designer desk
-    { x: 240, y: 220, w: 90, h: 45 }, // PM desk
+    { x: 80, y: 96, w: 64, h: 32, type: 'desk', label: 'Dev' },
+    { x: 224, y: 96, w: 64, h: 32, type: 'desk', label: 'Tech Lead' },
+    { x: 80, y: 224, w: 64, h: 32, type: 'desk', label: 'Design' },
+    { x: 224, y: 224, w: 64, h: 32, type: 'desk', label: 'PM' },
 
     // Meeting Room table
-    { x: 460, y: 100, w: 110, h: 70 },
+    { x: 480, y: 96, w: 96, h: 64, type: 'table' },
 
     // Break Room Counter/Coffee area (bottom-left)
-    { x: 20, y: 380, w: 160, h: 30 },
-    { x: 20, y: 380, w: 40, h: 80 },
+    { x: 20, y: 384, w: 128, h: 32, type: 'counter' },
+    { x: 20, y: 384, w: 32, h: 64, type: 'counter' },
   ];
+
+  const [obstacles, setObstacles] = useState<{ x: number; y: number; w: number; h: number; type: string; label?: string }[]>(() => {
+    const saved = localStorage.getItem('VO_CUSTOM_OBSTACLES');
+    return saved ? JSON.parse(saved) : defaultObstacles;
+  });
+
+  const obstaclesRef = useRef(obstacles);
+  useEffect(() => {
+    obstaclesRef.current = obstacles;
+    localStorage.setItem('VO_CUSTOM_OBSTACLES', JSON.stringify(obstacles));
+  }, [obstacles]);
+
+  // Layout designer setting hooks
+  const [designMode, setDesignMode] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<'wall' | 'desk' | 'plant' | 'erase'>('wall');
 
   // Desk Chairs (seats)
   const deskChairs = [
@@ -141,7 +156,7 @@ export const GameEngine: React.FC<GameEngineProps> = ({
 
     const checkCollision = (newX: number, newY: number) => {
       const charRadius = 12;
-      for (const obs of obstacles) {
+      for (const obs of obstaclesRef.current) {
         if (
           newX + charRadius > obs.x &&
           newX - charRadius < obs.x + obs.w &&
@@ -234,72 +249,88 @@ export const GameEngine: React.FC<GameEngineProps> = ({
       ctx.strokeStyle = 'rgba(157, 78, 221, 0.15)';
       ctx.strokeRect(20, 320, 220, 140);
 
-      // Draw obstacle boundaries (retro isometric details)
-      obstacles.forEach(obs => {
+      // Draw obstacles dynamically from state
+      obstaclesRef.current.forEach(obs => {
         // Floor shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-        ctx.fillRect(obs.x + 3, obs.y + obs.h - 4, obs.w, 8);
+        ctx.fillStyle = 'rgba(0,0,0,0.15)';
+        ctx.fillRect(obs.x + 2, obs.y + obs.h - 4, obs.w - 4, 8);
 
-        // Drawing obstacles - cyber tech style borders
-        ctx.fillStyle = '#1c1e30';
-        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-        ctx.strokeStyle = '#2f3456';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
-
-        // Add a neon stripe for meeting room glass partitions
-        if (obs.x === 400 || obs.y === 260) {
-          ctx.strokeStyle = 'var(--accent-cyan)';
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = 'var(--accent-cyan)';
+        if (obs.type === 'wall') {
+          // Drawing wall blocks
+          ctx.fillStyle = '#16192c';
+          ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+          ctx.strokeStyle = '#2b2e4b';
+          ctx.lineWidth = 1.5;
           ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
-          ctx.shadowBlur = 0; // reset
+          
+          // cyber grid details
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.1)';
+          ctx.strokeRect(obs.x + 3, obs.y + 3, obs.w - 6, obs.h - 6);
+        } 
+        else if (obs.type === 'glass') {
+          ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
+          ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+        } 
+        else if (obs.type === 'desk') {
+          // Desk surface
+          ctx.fillStyle = '#22263f';
+          ctx.fillRect(obs.x + 2, obs.y + 2, obs.w - 4, obs.h - 4);
+          ctx.strokeStyle = '#3a4066';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(obs.x + 2, obs.y + 2, obs.w - 4, obs.h - 4);
+
+          // Monitor Base
+          ctx.fillStyle = '#111322';
+          ctx.fillRect(obs.x + (obs.w / 2) - 8, obs.y + (obs.h / 2) + 2, 16, 4);
+
+          // Monitor Screen (Neon Glow flicker)
+          const screenFlicker = Math.random() > 0.05 ? 'var(--accent-cyan)' : 'var(--bg-primary)';
+          ctx.fillStyle = screenFlicker;
+          ctx.shadowBlur = 3;
+          ctx.shadowColor = 'var(--accent-cyan)';
+          ctx.fillRect(obs.x + (obs.w / 2) - 12, obs.y + (obs.h / 2) - 6, 24, 6);
+          ctx.shadowBlur = 0;
+
+          if (obs.label) {
+            ctx.fillStyle = '#8e95b3';
+            ctx.font = '8px monospace';
+            ctx.fillText(obs.label, obs.x + 6, obs.y + obs.h - 6);
+          }
+        } 
+        else if (obs.type === 'plant') {
+          ctx.fillStyle = '#0f380f';
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.w/2, obs.y + obs.h/2, obs.w/2 - 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#1e6f1d';
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.w/2 - 3, obs.y + obs.h/2 - 3, obs.w/3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#39ff14';
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.w/2 + 2, obs.y + obs.h/2 - 4, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } 
+        else {
+          // generic fallbacks for tables and counters
+          ctx.fillStyle = obs.type === 'table' ? '#1f1512' : '#151726';
+          ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+          ctx.strokeStyle = obs.type === 'table' ? '#5a3d32' : '#2f3456';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(obs.x, obs.y, obs.w, obs.h);
+
+          if (obs.type === 'table') {
+            ctx.fillStyle = '#8e95b3';
+            ctx.font = '8px monospace';
+            ctx.fillText('Conf Table', obs.x + 18, obs.y + 36);
+          }
         }
       });
 
-      // Draw desks items (monitors, keyboards, glowing screens)
-      const drawDeskOverlay = (x: number, y: number, label: string) => {
-        // Desk shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.15)';
-        ctx.fillRect(x + 5, y + 15, 80, 25);
-        
-        // Desk top
-        ctx.fillStyle = '#22263f';
-        ctx.fillRect(x + 5, y + 5, 80, 20);
-        ctx.strokeStyle = '#3a4066';
-        ctx.strokeRect(x + 5, y + 5, 80, 20);
-
-        // Monitor Base
-        ctx.fillStyle = '#111322';
-        ctx.fillRect(x + 35, y + 10, 20, 4);
-
-        // Monitor Screen (Neon Glow flicker)
-        const screenFlicker = Math.random() > 0.05 ? 'var(--accent-cyan)' : 'var(--bg-primary)';
-        ctx.fillStyle = screenFlicker;
-        ctx.shadowBlur = 3;
-        ctx.shadowColor = 'var(--accent-cyan)';
-        ctx.fillRect(x + 30, y + 2, 30, 8);
-        ctx.shadowBlur = 0;
-
-        ctx.fillStyle = '#8e95b3';
-        ctx.font = '8px monospace';
-        ctx.fillText(label, x + 8, y + 42);
-      };
-
-      drawDeskOverlay(80, 100, 'Developer');
-      drawDeskOverlay(240, 100, 'Tech Lead');
-      drawDeskOverlay(80, 220, 'Designer');
-      drawDeskOverlay(240, 220, 'Product Mgr');
-
-      // Draw meeting table
-      ctx.fillStyle = '#1f1512'; // wooden dark table
-      ctx.fillRect(460, 100, 110, 70);
-      ctx.strokeStyle = '#5a3d32';
-      ctx.strokeRect(460, 100, 110, 70);
-      ctx.fillStyle = '#8e95b3';
-      ctx.fillText('Conf Table', 490, 140);
-
-      // Draw plant decorations
+      // Draw plant decorations (static highlights)
       const drawPlant = (px: number, py: number) => {
         ctx.fillStyle = '#0f380f';
         ctx.beginPath(); ctx.arc(px, py, 10, 0, Math.PI * 2); ctx.fill();
@@ -500,7 +531,12 @@ export const GameEngine: React.FC<GameEngineProps> = ({
     };
   }, [allProfiles, currentProfile?.id, pos.x, pos.y, direction, isWalking]);
 
-  // Click to navigate support
+  const handleResetLayout = () => {
+    setObstacles(defaultObstacles);
+    localStorage.removeItem('VO_CUSTOM_OBSTACLES');
+  };
+
+  // Click to navigate support OR dynamic tile painting
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas || !currentProfile) return;
@@ -508,17 +544,125 @@ export const GameEngine: React.FC<GameEngineProps> = ({
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
 
-    // Direct snap-teleport movement or simple slide towards click position
-    // For retro feel, instant snap is solid, or we slide posRef
-    posRef.current.x = clickX;
-    posRef.current.y = clickY;
-    setPos({ x: clickX, y: clickY });
-    onZoneChange(getZoneAt(clickX, clickY));
-    syncPositionToDB(clickX, clickY);
+    if (designMode) {
+      // Paint Layout Mode: Snap to 32x32 grid
+      const gridSize = 32;
+      const tileX = Math.floor(clickX / gridSize) * gridSize;
+      const tileY = Math.floor(clickY / gridSize) * gridSize;
+
+      // Restrict overriding map boundary walls to prevent leaks
+      if (tileX < 32 || tileX >= mapWidth - 32 || tileY < 32 || tileY >= mapHeight - 32) {
+        return;
+      }
+
+      if (selectedTool === 'erase') {
+        // Erase any custom/original items sitting on this tile
+        setObstacles(prev => prev.filter(obs => !(obs.x === tileX && obs.y === tileY)));
+      } else {
+        // Erase first to prevent overlapping
+        const filtered = obstacles.filter(obs => !(obs.x === tileX && obs.y === tileY));
+        
+        const newObs = {
+          x: tileX,
+          y: tileY,
+          w: 32,
+          h: 32,
+          type: selectedTool,
+          label: selectedTool === 'desk' ? 'Custom' : undefined
+        };
+
+        setObstacles([...filtered, newObs]);
+      }
+    } else {
+      // Direct snap-teleport movement
+      posRef.current.x = clickX;
+      posRef.current.y = clickY;
+      setPos({ x: clickX, y: clickY });
+      onZoneChange(getZoneAt(clickX, clickY));
+      syncPositionToDB(clickX, clickY);
+    }
   };
 
   return (
     <div ref={containerRef} className="retro-screen w-full h-[480px] bg-[#0c0d16] flex items-center justify-center relative">
+      {/* Design Mode toggle button */}
+      <button
+        type="button"
+        onClick={() => setDesignMode(!designMode)}
+        className={`absolute top-3 right-3 px-3 py-1.5 rounded text-[9px] font-hud font-bold border flex items-center gap-1.5 z-20 transition-all ${
+          designMode
+            ? 'bg-[var(--accent-magenta)] text-white border-[var(--accent-magenta)] shadow-[0_0_10px_rgba(255,0,127,0.4)]'
+            : 'bg-[rgba(10,11,16,0.85)] text-[var(--accent-cyan)] border-[var(--accent-cyan)] hover:bg-[rgba(0,240,255,0.1)]'
+        }`}
+      >
+        {designMode ? '🛠️ EXIT DESIGNER' : '🛠️ DESIGN MAP'}
+      </button>
+
+      {/* Floating tools bar if designMode is active */}
+      {designMode && (
+        <div className="absolute top-14 left-3 bg-[rgba(12,14,23,0.95)] border border-[var(--border-color)] px-3 py-2 rounded-lg text-xs font-mono flex items-center gap-2.5 shadow-xl z-20">
+          <span className="text-[10px] text-[var(--accent-cyan)] font-bold font-hud">PAINT:</span>
+          
+          <button
+            type="button"
+            onClick={() => setSelectedTool('wall')}
+            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+              selectedTool === 'wall'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
+                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+            }`}
+          >
+            WALL
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => setSelectedTool('desk')}
+            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+              selectedTool === 'desk'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
+                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+            }`}
+          >
+            DESK
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => setSelectedTool('plant')}
+            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+              selectedTool === 'plant'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
+                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+            }`}
+          >
+            PLANT
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => setSelectedTool('erase')}
+            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+              selectedTool === 'erase'
+                ? 'bg-[var(--accent-magenta)] text-white border-[var(--accent-magenta)]'
+                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+            }`}
+          >
+            ERASER
+          </button>
+          
+          <span className="w-[1px] h-3 bg-zinc-700"></span>
+          
+          <button
+            type="button"
+            onClick={handleResetLayout}
+            className="px-2 py-0.5 rounded text-[8px] font-bold bg-red-950 text-red-400 border border-red-800 hover:bg-red-900 transition-colors"
+          >
+            RESET
+          </button>
+        </div>
+      )}
+
       <canvas
         ref={canvasRef}
         width={mapWidth}
@@ -526,13 +670,20 @@ export const GameEngine: React.FC<GameEngineProps> = ({
         onClick={handleCanvasClick}
         className="cursor-crosshair block"
       />
+      
       {/* HUD overlay labels */}
-      <div className="absolute top-3 left-3 bg-[rgba(10,11,16,0.8)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[10px] text-zinc-400 font-mono flex items-center gap-3">
-        <span>🎮 WASD / Arrows to Move</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
-        <span>🖱️ Click Map to Jump</span>
+      <div className="absolute bottom-3 left-3 bg-[rgba(10,11,16,0.85)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[9px] text-zinc-400 font-mono flex items-center gap-3">
+        {designMode ? (
+          <span className="text-[var(--accent-cyan)] font-bold">🖱️ Click on grid to paint tiles</span>
+        ) : (
+          <>
+            <span>🎮 WASD / Arrows to Move</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
+            <span>🖱️ Click Map to Jump</span>
+          </>
+        )}
       </div>
-      <div className="absolute bottom-3 right-3 bg-[rgba(10,11,16,0.8)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[10px] text-zinc-400 font-mono">
+      <div className="absolute bottom-3 right-3 bg-[rgba(10,11,16,0.85)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[9px] text-zinc-400 font-mono">
         Active Zone: <span className="text-cyan-400 font-bold capitalize">{getZoneAt(pos.x, pos.y)}</span>
       </div>
     </div>
