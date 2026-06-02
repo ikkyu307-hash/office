@@ -158,14 +158,23 @@ export const GameEngine: React.FC<GameEngineProps> = ({
       // 1. UPDATE LOGIC
       let dx = 0;
       let dy = 0;
-      const speed = 2.5;
+      const speed = 1.5;
 
       const keys = keysPressedRef.current;
-      if (keys['w'] || keys['arrowup']) { dy = -speed; setDirection('up'); }
-      else if (keys['s'] || keys['arrowdown']) { dy = speed; setDirection('down'); }
+      if (keys['w'] || keys['arrowup']) { dy = -1; setDirection('up'); }
+      else if (keys['s'] || keys['arrowdown']) { dy = 1; setDirection('down'); }
       
-      if (keys['a'] || keys['arrowleft']) { dx = -speed; setDirection('left'); }
-      else if (keys['d'] || keys['arrowright']) { dx = speed; setDirection('right'); }
+      if (keys['a'] || keys['arrowleft']) { dx = -1; setDirection('left'); }
+      else if (keys['d'] || keys['arrowright']) { dx = 1; setDirection('right'); }
+
+      // Normalize diagonal speed
+      if (dx !== 0 && dy !== 0) {
+        dx *= 0.7071;
+        dy *= 0.7071;
+      }
+
+      dx *= speed;
+      dy *= speed;
 
       const walking = dx !== 0 || dy !== 0;
       setIsWalking(walking);
