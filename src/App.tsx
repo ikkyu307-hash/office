@@ -362,7 +362,7 @@ function App() {
                     className="input-retro text-xs w-full pr-10 border-[var(--border-color)] focus:border-[var(--accent-magenta)] focus:shadow-[0_0_12px_rgba(255,0,127,0.2)]"
                     required
                   />
-                  <div className="absolute right-3 top-3 flex items-center">
+                  <div className="absolute right-3 inset-y-0 flex items-center pointer-events-none">
                     <span className={`w-2 h-2 rounded-full ${apiKeyInput ? 'bg-[var(--accent-cyan)] shadow-[0_0_6px_var(--accent-cyan)]' : 'bg-red-500'}`}></span>
                   </div>
                 </div>

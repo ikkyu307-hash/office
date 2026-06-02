@@ -166,9 +166,9 @@ body {
   background: rgba(3, 4, 6, 0.85);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 12px 16px;
+  padding: 9px 12px;
   font-family: var(--font-code);
-  font-size: 12px;
+  font-size: 11px;
   border-radius: 8px;
   outline: none;
   width: 100%;
@@ -179,6 +179,17 @@ body {
   border-color: var(--accent-cyan);
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
   background: #040509;
+}
+
+select.input-retro {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='rgba(0, 240, 255, 0.6)' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 18px;
+  padding-right: 32px;
+  cursor: pointer;
 }
 
 /* CRT Screen Cabinet chassis and monitor glare */

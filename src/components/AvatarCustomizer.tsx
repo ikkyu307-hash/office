@@ -209,7 +209,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
           </div>
 
           {/* Right Side Options */}
-          <div className="flex-1 flex flex-col gap-4 overflow-y-auto max-h-[300px] pr-2">
+          <div className="flex-1 flex flex-col gap-4 overflow-y-auto max-h-[350px] md:max-h-[50vh] pr-2">
             
             {/* Identity details */}
             <div className="flex flex-col gap-2">
@@ -291,7 +291,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             {/* 2. Hair styles */}
             <div className="flex flex-col gap-2">
               <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Hair Style</label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
                   { id: 1, label: 'Bob / Curly' },
                   { id: 2, label: 'Crop Cut' },
@@ -302,7 +302,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
                     key={hair.id}
                     type="button"
                     onClick={() => setHairStyleId(hair.id)}
-                    className={`btn-retro text-[9px] py-1 text-center justify-center ${hairStyleId === hair.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
+                    className={`btn-retro text-[9px] py-2 text-center justify-center ${hairStyleId === hair.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
                   >
                     {hair.label}
                   </button>
@@ -327,7 +327,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             {/* 4. Accessories */}
             <div className="flex flex-col gap-2">
               <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Accessory Layer</label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
                   { id: 0, label: 'None' },
                   { id: 1, label: 'Glasses' },
@@ -338,7 +338,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
                     key={acc.id}
                     type="button"
                     onClick={() => setAccessoryId(acc.id)}
-                    className={`btn-retro text-[9px] py-1 text-center justify-center ${accessoryId === acc.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
+                    className={`btn-retro text-[9px] py-2 text-center justify-center ${accessoryId === acc.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
                   >
                     {acc.label}
                   </button>

@@ -540,9 +540,13 @@ export const GameEngine: React.FC<GameEngineProps> = ({
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas || !currentProfile) return;
+    
     const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const clickX = (e.clientX - rect.left) * scaleX;
+    const clickY = (e.clientY - rect.top) * scaleY;
 
     if (designMode) {
       // Paint Layout Mode: Snap to 32x32 grid
@@ -668,7 +672,7 @@ export const GameEngine: React.FC<GameEngineProps> = ({
         width={mapWidth}
         height={mapHeight}
         onClick={handleCanvasClick}
-        className="cursor-crosshair block"
+        className="cursor-crosshair block max-w-full max-h-full object-contain"
       />
       
       {/* HUD overlay labels */}
