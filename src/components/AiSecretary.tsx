@@ -283,10 +283,10 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
   };
 
   return (
-    <div className="hud-panel h-full flex flex-col border border-[var(--border-color)] overflow-hidden">
+    <div className="hud-panel h-full flex flex-col border border-[var(--border-color)] overflow-hidden bg-[rgba(9,11,18,0.95)]">
       
       {/* Sidebar Tabs */}
-      <div className="grid grid-cols-5 border-b border-[var(--border-color)] bg-[rgba(25,27,44,0.3)]">
+      <div className="grid grid-cols-5 border-b border-[var(--border-color)] bg-[rgba(25,27,44,0.4)]">
         {[
           { id: 'chat', label: 'Chat', icon: MessageSquare },
           { id: 'tasks', label: 'Tasks', icon: ClipboardList },
@@ -300,63 +300,77 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`py-3 flex flex-col items-center justify-center gap-1 border-r border-[var(--border-color)] transition-all ${
+              className={`py-3 flex flex-col items-center justify-center gap-1 border-r border-[var(--border-color)] transition-all cyber-tab ${
                 isActive 
-                  ? 'bg-[var(--bg-secondary)] text-[var(--accent-cyan)] border-b-2 border-b-[var(--accent-cyan)]' 
+                  ? 'bg-[var(--bg-secondary)] text-[var(--accent-cyan)] border-b-2 border-b-[var(--accent-cyan)] cyber-tab-active shadow-[inset_0_0_12px_rgba(0,240,255,0.05)]' 
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
-              <Icon size={16} />
-              <span className="text-[9px] font-mono leading-none">{tab.label}</span>
+              <Icon size={15} />
+              <span className="text-[9px] font-hud font-bold leading-none tracking-wider">{tab.label}</span>
             </button>
           );
         })}
       </div>
 
       {/* Tabs Content */}
-      <div className="flex-1 overflow-y-auto p-4 bg-[rgba(10,11,16,0.3)]">
+      <div className="flex-1 overflow-y-auto p-4 bg-[rgba(10,11,16,0.15)]">
         
         {/* CHAT TAB */}
         {activeTab === 'chat' && (
           <div className="h-full flex flex-col justify-between gap-3">
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
+              
+              {/* Secretary System Status Card */}
+              <div className="p-2.5 bg-[rgba(10,12,22,0.65)] border border-[var(--border-color)] rounded-lg flex items-center justify-between text-[9px] font-mono shadow-[inset_0_0_10px_rgba(0,240,255,0.02)]">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse shadow-[0_0_6px_var(--accent-green)]"></span>
+                  <span className="text-zinc-500">SYS:</span>
+                  <span className="text-[var(--accent-green)] font-bold">ONLINE</span>
+                </div>
+                <div className="flex items-center gap-3 text-zinc-500">
+                  <span>LATENCY: <strong className="text-zinc-300">24ms</strong></span>
+                  <span>CORE: <strong className="text-zinc-300">GPT-4o-Mini</strong></span>
+                </div>
+              </div>
+
               {chatMessages.map(msg => (
                 <div 
                   key={msg.id} 
-                  className={`flex flex-col p-2.5 rounded ${
+                  className={`flex flex-col p-3 rounded-lg holo-card transition-all ${
                     msg.sender === 'secretary' 
-                      ? 'bg-[rgba(0,240,255,0.05)] border border-[rgba(0,240,255,0.15)] text-zinc-200' 
-                      : 'bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.05)] text-zinc-300 ml-6'
+                      ? 'bg-[rgba(0,240,255,0.03)] border-[rgba(0,240,255,0.15)] text-zinc-200' 
+                      : 'bg-[rgba(255,0,127,0.03)] border-[rgba(255,0,127,0.15)] text-zinc-200 ml-6'
                   }`}
                 >
-                  <div className="flex justify-between items-center mb-1">
-                    <span className={`font-mono text-[9px] font-bold ${
-                      msg.sender === 'secretary' ? 'text-[var(--accent-cyan)]' : 'text-zinc-400'
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className={`font-hud text-[9px] font-bold tracking-wider ${
+                      msg.sender === 'secretary' ? 'text-[var(--accent-cyan)]' : 'text-[var(--accent-magenta)]'
                     }`}>
-                      {msg.sender === 'secretary' ? '🤖 SECRETARY' : `👤 ${msg.senderName.toUpperCase()}`}
+                      {msg.sender === 'secretary' ? '🤖 SECRETARY CORE' : `👤 ${msg.senderName.toUpperCase()}`}
                     </span>
                     <span className="text-[8px] text-zinc-600 font-mono">
                       {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="font-mono whitespace-pre-line leading-relaxed">{msg.text}</p>
+                  <p className="font-mono whitespace-pre-line leading-relaxed text-[11px]">{msg.text}</p>
                 </div>
               ))}
               {isTyping && (
-                <div className="text-[10px] text-[var(--accent-cyan)] font-mono animate-pulse">
-                  🤖 Secretary is computing actions...
+                <div className="text-[10px] text-[var(--accent-cyan)] font-hud font-bold tracking-wide animate-pulse flex items-center gap-1.5 pl-1">
+                  <span>🤖 Computing agent pipeline...</span>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
-            <form onSubmit={handleChatSubmit} className="flex gap-2">
+            <form onSubmit={handleChatSubmit} className="flex gap-2 bg-[rgba(10,12,22,0.4)] p-1.5 border border-[var(--border-color)] rounded-lg">
               <input
                 type="text"
                 value={inputText}
                 onChange={e => setInputText(e.target.value)}
-                placeholder="Ask secretary: 'Add a urgent bug fix task'"
-                className="input-retro text-xs flex-1"
+                placeholder="Ask: 'Assign bugfix to me' or 'Query handbook'"
+                className="input-retro text-xs flex-1 border-0 focus:ring-0 bg-transparent py-1 px-2"
                 disabled={isTyping}
               />
               <button
@@ -364,7 +378,7 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
                 className="btn-retro p-2 border-[var(--accent-cyan)] text-[var(--accent-cyan)]"
                 disabled={isTyping}
               >
-                <Send size={14} />
+                <Send size={13} />
               </button>
             </form>
           </div>
@@ -374,60 +388,75 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
         {activeTab === 'tasks' && (
           <div className="flex flex-col gap-4 h-full">
             {/* Quick creation form */}
-            <form onSubmit={handleCreateTask} className="flex flex-col gap-2 p-3 bg-[rgba(25,27,44,0.4)] border border-[var(--border-color)] rounded">
-              <span className="text-[10px] font-bold text-zinc-400 font-mono">📝 QUICK TASK ADD</span>
-              <div className="flex gap-2">
+            <form onSubmit={handleCreateTask} className="flex flex-col gap-2 p-3 bg-[rgba(25,27,44,0.5)] border border-[rgba(0,240,255,0.1)] rounded-lg shadow-lg">
+              <span className="text-[9px] font-bold text-zinc-400 font-hud tracking-wider uppercase flex items-center gap-1.5">
+                <Plus size={11} className="text-[var(--accent-cyan)]" /> UPLINK NEW TASK
+              </span>
+              <div className="flex gap-2 mt-1">
                 <input
                   type="text"
                   value={newTitle}
                   onChange={e => setNewTitle(e.target.value)}
                   placeholder="Task title..."
-                  className="input-retro text-[11px] py-1 flex-1"
+                  className="input-retro text-[11px] py-1.5 flex-1"
                   required
                 />
                 <select
                   value={newPriority}
                   onChange={e => setNewPriority(e.target.value as any)}
-                  className="input-retro text-[10px] py-1 cursor-pointer"
+                  className="input-retro text-[10px] py-1 cursor-pointer w-20 bg-[#10121e]"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Med</option>
                   <option value="high">High</option>
                 </select>
-                <button type="submit" className="btn-retro px-2 py-1">
-                  <Plus size={12} />
+                <button type="submit" className="btn-retro px-3 py-1.5 border-[var(--accent-cyan)] text-[var(--accent-cyan)]">
+                  ADD
                 </button>
               </div>
             </form>
 
             {/* Kanban Columns (Simulated) */}
-            <div className="space-y-3 flex-1 overflow-y-auto pr-1">
+            <div className="space-y-4 flex-1 overflow-y-auto pr-1">
               {['todo', 'in_progress', 'done'].map(statusName => {
                 const columnTasks = tasks.filter(t => t.status === statusName);
                 const titleMap: { [key: string]: string } = {
-                  todo: '📋 TODO',
-                  in_progress: '⚡ IN PROGRESS',
+                  todo: '📋 TODO QUEUE',
+                  in_progress: '⚡ IN RUNTIME',
                   done: '✅ COMPLETED'
+                };
+                const colorMap: { [key: string]: string } = {
+                  todo: 'text-[var(--accent-cyan)]',
+                  in_progress: 'text-[var(--accent-yellow)]',
+                  done: 'text-[var(--accent-green)]'
+                };
+                const borderMap: { [key: string]: string } = {
+                  todo: 'border-l-[var(--accent-cyan)] hover:shadow-[0_0_12px_rgba(0,240,255,0.1)]',
+                  in_progress: 'border-l-[var(--accent-yellow)] hover:shadow-[0_0_12px_rgba(255,234,0,0.1)]',
+                  done: 'border-l-[var(--accent-green)] hover:shadow-[0_0_12px_rgba(57,255,20,0.1)]'
                 };
                 return (
                   <div key={statusName} className="flex flex-col gap-2">
-                    <span className="text-[9px] font-bold text-zinc-500 font-mono tracking-wider">
-                      {titleMap[statusName]} ({columnTasks.length})
-                    </span>
+                    <div className="flex justify-between items-center px-1">
+                      <span className={`text-[9px] font-hud font-bold tracking-widest ${colorMap[statusName]}`}>
+                        {titleMap[statusName]}
+                      </span>
+                      <span className="text-[9px] bg-zinc-800 text-zinc-400 font-bold px-1.5 py-0.5 rounded-full font-mono">{columnTasks.length}</span>
+                    </div>
                     <div className="space-y-2">
                       {columnTasks.length === 0 ? (
-                        <div className="text-[10px] text-zinc-600 font-mono p-2 border border-dashed border-[var(--border-color)] rounded text-center">
-                          Column Empty
+                        <div className="text-[9px] text-zinc-600 font-mono py-3 border border-dashed border-[var(--border-color)] rounded-lg text-center">
+                          Queue Empty
                         </div>
                       ) : (
                         columnTasks.map(task => (
                           <div 
                             key={task.id} 
                             onClick={() => handleToggleTaskStatus(task)}
-                            className="p-2 bg-[rgba(25,27,44,0.2)] border border-[var(--border-color)] hover:border-zinc-400 transition-colors rounded cursor-pointer flex justify-between items-center text-[11px] font-mono group"
+                            className={`p-3 bg-[rgba(25,27,44,0.25)] border border-[var(--border-color)] border-l-2 ${borderMap[statusName]} transition-all rounded-lg cursor-pointer flex justify-between items-center text-[11px] font-mono group holo-card`}
                           >
                             <div className="flex flex-col">
-                              <span className="text-zinc-200 group-hover:text-[var(--accent-cyan)] transition-colors">
+                              <span className="text-zinc-200 group-hover:text-white font-bold transition-colors">
                                 {task.title}
                               </span>
                               {task.due_date && (
@@ -435,10 +464,10 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className={`text-[8px] px-1 rounded uppercase font-bold ${
-                                task.priority === 'high' ? 'bg-red-950 text-red-400 border border-red-800' :
-                                task.priority === 'medium' ? 'bg-yellow-950 text-yellow-400 border border-yellow-800' :
-                                'bg-zinc-800 text-zinc-400'
+                              <span className={`text-[7px] px-1 py-0.5 rounded uppercase font-bold tracking-wider ${
+                                task.priority === 'high' ? 'bg-red-950/60 text-red-400 border border-red-900/50' :
+                                task.priority === 'medium' ? 'bg-yellow-950/60 text-yellow-400 border border-yellow-900/50' :
+                                'bg-zinc-800/60 text-zinc-400'
                               }`}>
                                 {task.priority}
                               </span>
@@ -458,8 +487,8 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
         {/* ROOM BOOKINGS TAB */}
         {activeTab === 'schedule' && (
           <div className="flex flex-col gap-3 h-full overflow-y-auto pr-1">
-            <span className="text-[10px] font-bold text-zinc-400 font-mono tracking-wider uppercase mb-1">
-              📅 OFFICE ROOM RESERVATIONS
+            <span className="text-[9px] font-hud font-bold tracking-widest text-zinc-400 uppercase mb-2 block">
+              📅 SYSTEM ROOM RESERVATIONS
             </span>
             {bookings.length === 0 ? (
               <div className="text-xs text-zinc-500 font-mono p-4 text-center">
@@ -467,19 +496,20 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
               </div>
             ) : (
               bookings.map(book => (
-                <div key={book.id} className="p-3 bg-[rgba(25,27,44,0.3)] border border-[var(--border-color)] rounded flex flex-col gap-1 text-[11px] font-mono">
+                <div key={book.id} className="p-3.5 bg-[rgba(0,240,255,0.02)] border border-[rgba(0,240,255,0.12)] rounded-lg flex flex-col gap-2 text-[11px] font-mono holo-card">
                   <div className="flex justify-between items-center">
-                    <span className="text-[var(--accent-cyan)] font-bold">{book.room_name}</span>
+                    <span className="text-[var(--accent-cyan)] font-bold tracking-wider font-hud text-[10px]">{book.room_name}</span>
                     <span className="text-[9px] text-zinc-500">Booked by {book.booked_by_name || 'System'}</span>
                   </div>
-                  <div className="text-[10px] text-zinc-400 mt-1">
-                    🕒 {new Date(book.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(book.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <div className="text-[9px] text-zinc-400 mt-0.5 flex items-center gap-1.5">
+                    <span>🕒</span>
+                    <span>{new Date(book.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(book.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   {book.attendees && book.attendees.length > 0 && (
-                    <div className="text-[9px] text-zinc-500 mt-1 flex flex-wrap gap-1">
+                    <div className="text-[9px] text-zinc-500 mt-1 flex flex-wrap gap-1.5 items-center">
                       <span>Attendees:</span>
                       {book.attendees.map(a => (
-                        <span key={a} className="bg-zinc-800 px-1 py-0.5 rounded text-[8px] text-zinc-300">{a}</span>
+                        <span key={a} className="bg-[rgba(0,240,255,0.1)] text-[var(--accent-cyan)] border border-[rgba(0,240,255,0.2)] px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide">{a}</span>
                       ))}
                     </div>
                   )}
@@ -493,43 +523,45 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
         {activeTab === 'knowledge' && (
           <div className="flex flex-col gap-4 h-full">
             {/* Create new document form */}
-            <form onSubmit={handleUploadKnowledge} className="flex flex-col gap-2 p-3 bg-[rgba(25,27,44,0.4)] border border-[var(--border-color)] rounded">
-              <span className="text-[10px] font-bold text-zinc-400 font-mono">📚 INDEX NEW VECTOR DOCUMENT</span>
+            <form onSubmit={handleUploadKnowledge} className="flex flex-col gap-2.5 p-3 bg-[rgba(25,27,44,0.5)] border border-[rgba(157,78,221,0.15)] rounded-lg shadow-lg">
+              <span className="text-[9px] font-bold text-zinc-400 font-hud tracking-wider uppercase flex items-center gap-1.5">
+                <Database size={11} className="text-[var(--accent-purple)]" /> VECTOR CORE UPLINK
+              </span>
               
               <input
                 type="text"
                 value={docTitle}
                 onChange={e => setDocTitle(e.target.value)}
-                placeholder="Document Title (e.g., HR Guidelines)"
-                className="input-retro text-[11px] py-1"
+                placeholder="Document Title (e.g., HR Rules)"
+                className="input-retro text-[11px] py-1.5 mt-1"
                 required
               />
               
               <textarea
                 value={docContent}
                 onChange={e => setDocContent(e.target.value)}
-                placeholder="Document details, FAQs, credentials..."
+                placeholder="Details, specifications, FAQs, credentials..."
                 rows={3}
-                className="input-retro text-[10px] py-1 resize-none"
+                className="input-retro text-[10px] py-1.5 resize-none"
                 required
               />
 
-              <button type="submit" className="btn-retro text-[11px] py-1 border-[var(--accent-cyan)] text-[var(--accent-cyan)] flex justify-center gap-1.5">
-                <Database size={12} /> Index Embedding
+              <button type="submit" className="btn-retro text-[10px] py-1.5 border-[var(--accent-purple)] text-[var(--accent-purple)] flex justify-center gap-1.5 hover:shadow-[0_0_12px_rgba(157,78,221,0.3)]">
+                <Database size={11} /> INDEX EMBEDDING (COMPILATION)
               </button>
             </form>
 
             {/* Knowledge Document List */}
-            <div className="flex-1 overflow-y-auto pr-1 space-y-2">
-              <span className="text-[9px] font-bold text-zinc-500 font-mono tracking-wider">
+            <div className="flex-1 overflow-y-auto pr-1 space-y-2.5">
+              <span className="text-[9px] font-bold text-zinc-500 font-hud tracking-widest">
                 INDEXED HANDBOOKS ({docs.length})
               </span>
               {docs.map(doc => (
-                <div key={doc.id} className="p-2.5 bg-[rgba(25,27,44,0.1)] border border-[var(--border-color)] rounded text-[10px] font-mono">
-                  <div className="font-bold text-zinc-300 flex items-center gap-1.5 mb-1 text-[11px]">
-                    <BookOpen size={10} className="text-[var(--accent-cyan)]" /> {doc.title}
+                <div key={doc.id} className="p-3 bg-[rgba(157,78,221,0.02)] border border-[rgba(157,78,221,0.12)] rounded-lg text-[10px] font-mono holo-card">
+                  <div className="font-bold text-zinc-200 flex items-center gap-1.5 mb-1.5 text-[11px] font-hud tracking-wide">
+                    <BookOpen size={10} className="text-[var(--accent-purple)]" /> {doc.title}
                   </div>
-                  <p className="text-zinc-500 leading-normal">{doc.content.substring(0, 100)}...</p>
+                  <p className="text-zinc-500 leading-relaxed">{doc.content.substring(0, 100)}...</p>
                 </div>
               ))}
             </div>
@@ -539,7 +571,10 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
         {/* LOG TERMINAL TAB */}
         {activeTab === 'logs' && (
           <div className="h-full flex flex-col justify-between">
-            <div className="flex-1 overflow-y-auto font-mono text-[10px] text-zinc-400 bg-black p-3 border border-[var(--border-color)] rounded space-y-1.5 min-h-[220px]">
+            <div className="flex-1 overflow-y-auto terminal-console space-y-1.5 min-h-[220px]">
+              <div className="text-[9px] text-zinc-600 mb-2 border-b border-zinc-900 pb-1.5 font-hud tracking-widest">
+                ⚙️ SYSTEM LOG BUFFER ACTIVE
+              </div>
               {logs.map(log => {
                 let colorClass = 'text-green-400';
                 if (log.type === 'tool_call') colorClass = 'text-[var(--accent-cyan)]';
@@ -547,17 +582,22 @@ Be helpful, professional, and slightly conversational. Include a tiny retro pixe
                 else if (log.type === 'warning') colorClass = 'text-[var(--accent-yellow)]';
 
                 return (
-                  <div key={log.id} className="leading-relaxed">
+                  <div key={log.id} className="leading-relaxed text-[10px]">
                     <span className="text-zinc-700">[{log.timestamp.toLocaleTimeString()}]</span>{' '}
                     <span className={colorClass}>{log.text}</span>
                   </div>
                 );
               })}
+              <div className="leading-relaxed">
+                <span className="text-zinc-700">[{new Date().toLocaleTimeString()}]</span>{' '}
+                <span className="text-green-400">awaiting signals...</span>
+                <span className="blinking-caret"></span>
+              </div>
               <div ref={logsEndRef} />
             </div>
             <button
               onClick={() => setLogs([])}
-              className="btn-retro text-[9px] py-1 mt-2 text-center justify-center"
+              className="btn-retro text-[9px] py-1 mt-2 text-center justify-center border-zinc-700 hover:border-zinc-500"
             >
               Clear Buffer
             </button>

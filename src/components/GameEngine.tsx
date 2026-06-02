@@ -584,7 +584,7 @@ export const GameEngine: React.FC<GameEngineProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="retro-screen w-full h-[480px] bg-[#0c0d16] flex items-center justify-center relative">
+    <div ref={containerRef} className="retro-screen w-full h-[480px] bg-[#0c0d16] flex items-center justify-center relative radar-brackets radar-bottom-brackets">
       {/* Design Mode toggle button */}
       <button
         type="button"
@@ -592,7 +592,7 @@ export const GameEngine: React.FC<GameEngineProps> = ({
         className={`absolute top-3 right-3 px-3 py-1.5 rounded text-[9px] font-hud font-bold border flex items-center gap-1.5 z-20 transition-all ${
           designMode
             ? 'bg-[var(--accent-magenta)] text-white border-[var(--accent-magenta)] shadow-[0_0_10px_rgba(255,0,127,0.4)]'
-            : 'bg-[rgba(10,11,16,0.85)] text-[var(--accent-cyan)] border-[var(--accent-cyan)] hover:bg-[rgba(0,240,255,0.1)]'
+            : 'bg-[rgba(10,11,16,0.85)] text-[var(--accent-cyan)] border-[var(--accent-cyan)] hover:bg-[rgba(0,240,255,0.1)] shadow-[0_0_8px_rgba(0,240,255,0.15)]'
         }`}
       >
         {designMode ? '🛠️ EXIT DESIGNER' : '🛠️ DESIGN MAP'}
@@ -600,16 +600,16 @@ export const GameEngine: React.FC<GameEngineProps> = ({
 
       {/* Floating tools bar if designMode is active */}
       {designMode && (
-        <div className="absolute top-14 left-3 bg-[rgba(12,14,23,0.95)] border border-[var(--border-color)] px-3 py-2 rounded-lg text-xs font-mono flex items-center gap-2.5 shadow-xl z-20">
-          <span className="text-[10px] text-[var(--accent-cyan)] font-bold font-hud">PAINT:</span>
+        <div className="absolute top-14 left-3 bg-[rgba(12,14,23,0.95)] border border-[rgba(0,240,255,0.25)] px-3 py-2.5 rounded-lg text-xs font-mono flex items-center gap-2.5 shadow-[0_0_20px_rgba(0,240,255,0.1)] z-20 radar-brackets radar-bottom-brackets">
+          <span className="text-[10px] text-[var(--accent-cyan)] font-bold font-hud tracking-wider">MAP DESIGNER:</span>
           
           <button
             type="button"
             onClick={() => setSelectedTool('wall')}
-            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+            className={`px-2.5 py-1 rounded text-[8px] font-hud font-bold border transition-all ${
               selectedTool === 'wall'
-                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
-                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)] shadow-[0_0_8px_rgba(0,240,255,0.3)]'
+                : 'bg-transparent text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700'
             }`}
           >
             WALL
@@ -618,10 +618,10 @@ export const GameEngine: React.FC<GameEngineProps> = ({
           <button
             type="button"
             onClick={() => setSelectedTool('desk')}
-            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+            className={`px-2.5 py-1 rounded text-[8px] font-hud font-bold border transition-all ${
               selectedTool === 'desk'
-                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
-                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)] shadow-[0_0_8px_rgba(0,240,255,0.3)]'
+                : 'bg-transparent text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700'
             }`}
           >
             DESK
@@ -630,10 +630,10 @@ export const GameEngine: React.FC<GameEngineProps> = ({
           <button
             type="button"
             onClick={() => setSelectedTool('plant')}
-            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+            className={`px-2.5 py-1 rounded text-[8px] font-hud font-bold border transition-all ${
               selectedTool === 'plant'
-                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)]'
-                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+                ? 'bg-[var(--accent-cyan)] text-black border-[var(--accent-cyan)] shadow-[0_0_8px_rgba(0,240,255,0.3)]'
+                : 'bg-transparent text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700'
             }`}
           >
             PLANT
@@ -642,23 +642,23 @@ export const GameEngine: React.FC<GameEngineProps> = ({
           <button
             type="button"
             onClick={() => setSelectedTool('erase')}
-            className={`px-2 py-0.5 rounded text-[8px] font-bold border transition-colors ${
+            className={`px-2.5 py-1 rounded text-[8px] font-hud font-bold border transition-all ${
               selectedTool === 'erase'
-                ? 'bg-[var(--accent-magenta)] text-white border-[var(--accent-magenta)]'
-                : 'bg-transparent text-zinc-400 border-zinc-700 hover:text-white'
+                ? 'bg-[var(--accent-magenta)] text-white border-[var(--accent-magenta)] shadow-[0_0_8px_rgba(255,0,127,0.3)]'
+                : 'bg-transparent text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700'
             }`}
           >
             ERASER
           </button>
           
-          <span className="w-[1px] h-3 bg-zinc-700"></span>
+          <span className="w-[1px] h-3 bg-zinc-800"></span>
           
           <button
             type="button"
             onClick={handleResetLayout}
-            className="px-2 py-0.5 rounded text-[8px] font-bold bg-red-950 text-red-400 border border-red-800 hover:bg-red-900 transition-colors"
+            className="px-2.5 py-1 rounded text-[8px] font-hud font-bold bg-red-950/80 text-red-400 border border-red-900/60 hover:bg-red-900 transition-all hover:shadow-[0_0_8px_rgba(239,68,68,0.2)]"
           >
-            RESET
+            RESET ALL
           </button>
         </div>
       )}
@@ -672,19 +672,21 @@ export const GameEngine: React.FC<GameEngineProps> = ({
       />
       
       {/* HUD overlay labels */}
-      <div className="absolute bottom-3 left-3 bg-[rgba(10,11,16,0.85)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[9px] text-zinc-400 font-mono flex items-center gap-3">
+      <div className="absolute bottom-3 left-3 bg-[rgba(10,11,16,0.85)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg text-[9px] text-zinc-400 font-mono flex items-center gap-3 shadow-lg">
         {designMode ? (
-          <span className="text-[var(--accent-cyan)] font-bold">🖱️ Click on grid to paint tiles</span>
+          <span className="text-[var(--accent-cyan)] font-bold font-hud">🛠️ PAINTING MODE</span>
         ) : (
           <>
-            <span>🎮 WASD / Arrows to Move</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
-            <span>🖱️ Click Map to Jump</span>
+            <span>🎮 WASD / Arrows</span>
+            <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
+            <span>🖱️ Click to Teleport</span>
           </>
         )}
       </div>
-      <div className="absolute bottom-3 right-3 bg-[rgba(10,11,16,0.85)] border border-[rgba(255,255,255,0.15)] px-3 py-1.5 rounded text-[9px] text-zinc-400 font-mono">
-        Active Zone: <span className="text-cyan-400 font-bold capitalize">{getZoneAt(pos.x, pos.y)}</span>
+      <div className="absolute bottom-3 right-3 bg-[rgba(10,11,16,0.85)] border border-[var(--border-color)] px-3 py-1.5 rounded-lg text-[9px] text-zinc-400 font-mono flex items-center gap-3 shadow-lg">
+        <span className="text-zinc-500">COORDS: <strong className="text-zinc-300 font-bold">{Math.round(pos.x)}, {Math.round(pos.y)}</strong></span>
+        <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
+        <span>ZONE: <span className="text-[var(--accent-cyan)] font-bold uppercase">{getZoneAt(pos.x, pos.y)}</span></span>
       </div>
     </div>
   );

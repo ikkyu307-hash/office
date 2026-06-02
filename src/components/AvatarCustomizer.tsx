@@ -184,15 +184,15 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(5,6,10,0.85)] backdrop-blur-sm p-4">
-      <div className="hud-panel w-full max-w-lg border-2 border-[var(--border-color)] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(3,4,7,0.85)] backdrop-blur-md p-4">
+      <div className="hud-panel w-full max-w-lg border-2 border-[rgba(0,240,255,0.25)] overflow-hidden radar-brackets radar-bottom-brackets shadow-[0_0_40px_rgba(0,240,255,0.15)] bg-[rgba(9,11,18,0.95)]">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)] bg-[rgba(25,27,44,0.5)]">
-          <h2 className="text-base font-bold text-[var(--accent-cyan)] flex items-center gap-2">
-            🎨 CUSTOMIZE RETRO AVATAR
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)] bg-[rgba(25,27,44,0.6)]">
+          <h2 className="text-sm font-bold text-[var(--accent-cyan)] flex items-center gap-2 font-hud tracking-widest">
+            🎨 CHARACTER UPLINK PORTAL
           </h2>
-          <button onClick={onClose} className="p-1 hover:text-[var(--accent-magenta)] transition-colors">
+          <button onClick={onClose} className="p-1 hover:text-[var(--accent-magenta)] transition-colors text-zinc-400">
             <X size={18} />
           </button>
         </div>
@@ -202,10 +202,10 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
           
           {/* Left Side Preview */}
           <div className="flex flex-col items-center gap-3">
-            <div className="w-32 h-32 retro-screen bg-[#07080d] flex items-center justify-center rounded">
+            <div className="w-32 h-32 retro-screen bg-[#07080d] flex items-center justify-center rounded-lg border-[var(--border-color)] radar-brackets radar-bottom-brackets">
               <canvas ref={previewCanvasRef} width={80} height={80} className="w-24 h-24" />
             </div>
-            <span className="text-[10px] text-zinc-500 uppercase font-mono">Live Walk Preview</span>
+            <span className="text-[10px] text-zinc-500 uppercase font-hud tracking-wider font-bold">TRANSMISSION ACTIVE</span>
           </div>
 
           {/* Right Side Options */}
@@ -213,7 +213,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             
             {/* Identity details */}
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Employee Name</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Employee Name</label>
               <input
                 type="text"
                 value={name}
@@ -225,7 +225,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Avatar Nickname</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Avatar Nickname</label>
               <input
                 type="text"
                 value={nickname}
@@ -239,11 +239,11 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             {/* Department Selection */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] text-zinc-400 font-mono">Department</label>
+                <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Department</label>
                 <select
                   value={department}
                   onChange={e => setDepartment(e.target.value as any)}
-                  className="input-retro text-xs w-full cursor-pointer"
+                  className="input-retro text-xs w-full cursor-pointer bg-[#10121e]"
                 >
                   <option value="Tech">Tech</option>
                   <option value="Design">Design</option>
@@ -254,11 +254,11 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[11px] text-zinc-400 font-mono">Job Position</label>
+                <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Job Position</label>
                 <select
                   value={position}
                   onChange={e => setPosition(e.target.value as any)}
-                  className="input-retro text-xs w-full cursor-pointer"
+                  className="input-retro text-xs w-full cursor-pointer bg-[#10121e]"
                 >
                   {getPositionsForDepartment(department).map(pos => (
                     <option key={pos} value={pos}>{pos}</option>
@@ -272,14 +272,14 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
             {/* Customize Layers */}
             {/* 1. Skin Tone selection */}
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Base Skin Tone</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Base Skin Tone</label>
               <div className="flex gap-3">
                 {[1, 2, 3].map(toneId => (
                   <button
                     key={toneId}
                     type="button"
                     onClick={() => setSkinToneId(toneId)}
-                    className={`w-8 h-8 rounded border-2 ${skinToneId === toneId ? 'border-[var(--accent-cyan)]' : 'border-transparent'}`}
+                    className={`w-8 h-8 rounded border-2 transition-all ${skinToneId === toneId ? 'border-[var(--accent-cyan)] shadow-[0_0_8px_rgba(0,240,255,0.4)]' : 'border-transparent'}`}
                     style={{
                       backgroundColor: toneId === 1 ? '#ffcc99' : toneId === 2 ? '#e2a65d' : '#8d5524'
                     }}
@@ -290,7 +290,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
 
             {/* 2. Hair styles */}
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Hair Style</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Hair Style</label>
               <div className="grid grid-cols-4 gap-2">
                 {[
                   { id: 1, label: 'Bob / Curly' },
@@ -302,7 +302,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
                     key={hair.id}
                     type="button"
                     onClick={() => setHairStyleId(hair.id)}
-                    className={`btn-retro text-[10px] py-1 text-center justify-center ${hairStyleId === hair.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)]' : ''}`}
+                    className={`btn-retro text-[9px] py-1 text-center justify-center ${hairStyleId === hair.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
                   >
                     {hair.label}
                   </button>
@@ -312,7 +312,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
 
             {/* 3. Hair color tint */}
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Hair Tint Color</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Hair Tint Color</label>
               <div className="flex items-center gap-3">
                 <input
                   type="color"
@@ -320,13 +320,13 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
                   onChange={e => setHairColor(e.target.value)}
                   className="w-10 h-8 bg-transparent border border-[var(--border-color)] rounded cursor-pointer p-0.5"
                 />
-                <span className="text-xs uppercase font-mono text-zinc-400">{hairColor}</span>
+                <span className="text-xs uppercase font-mono text-[var(--accent-cyan)] font-bold">{hairColor}</span>
               </div>
             </div>
 
             {/* 4. Accessories */}
             <div className="flex flex-col gap-2">
-              <label className="text-[11px] text-zinc-400 font-mono">Accessory Layer</label>
+              <label className="text-[10px] text-zinc-400 font-hud tracking-wider uppercase">Accessory Layer</label>
               <div className="grid grid-cols-4 gap-2">
                 {[
                   { id: 0, label: 'None' },
@@ -338,7 +338,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
                     key={acc.id}
                     type="button"
                     onClick={() => setAccessoryId(acc.id)}
-                    className={`btn-retro text-[10px] py-1 text-center justify-center ${accessoryId === acc.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)]' : ''}`}
+                    className={`btn-retro text-[9px] py-1 text-center justify-center ${accessoryId === acc.id ? 'border-[var(--accent-cyan)] text-[var(--accent-cyan)] shadow-[0_0_6px_rgba(0,240,255,0.2)]' : 'border-zinc-800'}`}
                   >
                     {acc.label}
                   </button>
@@ -350,7 +350,7 @@ export const AvatarCustomizer: React.FC<AvatarCustomizerProps> = ({
         </form>
 
         {/* Footer actions */}
-        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[var(--border-color)] bg-[rgba(25,27,44,0.5)]">
+        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[var(--border-color)] bg-[rgba(25,27,44,0.6)]">
           <button type="button" onClick={onClose} className="btn-retro">
             Cancel
           </button>
